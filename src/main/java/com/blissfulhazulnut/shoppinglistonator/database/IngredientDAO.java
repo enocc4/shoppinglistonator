@@ -7,9 +7,10 @@ package com.blissfulhazulnut.shoppinglistonator.database;
         import java.sql.Statement;
         import java.util.ArrayList;
         import java.util.List;
+        import java.util.*;
 
-        import com.blissfulhazulnut.shoppinglistonator.model.CatNotFoundException;
-        import com.blissfulhazulnut.shoppinglistonator.model.LOLCat;
+        import com.blissfulhazulnut.shoppinglistonator.models.Ingredient;
+        import com.blissfulhazulnut.shoppinglistonator.models.IngredientNotFoundException;
 
 /**
  * Data access object for a LOLCat entity; this class understands how to load
@@ -33,32 +34,31 @@ public class IngredientDAO {
         this.ds = DataSource.getInstance();
     }
 
-    public void save(LOLCat cat) throws SQLException {
-        System.out.println("Debug. About to save " + cat);
-        if (cat.getId() != null) {
-            update(cat);
+    public void save(Ingredient ingredient) throws SQLException {
+        System.out.println("Debug. About to save " + ingredient);
+        if (ingredient.getId() != null) {
+            update(ingredient);
         } else {
-            insert(cat);
+            insert(ingredient);
         }
     }
 
-    private void insert(LOLCat cat) throws SQLException {
-        String sql = "insert into lolcat (title, filename, image_format, image_data) values (?,?,?,?)";
+    private void insert(Ingredient ingredient) throws SQLException {
+        String sql = "insert into ingredients (title, filename, image_format, image_data) values (?,?,?,?)";
         PreparedStatement pstmt = null;
         Connection conn = null;
 
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, cat.getTitle());
-            pstmt.setString(2, cat.getFilename());
-            pstmt.setString(3, cat.getImageFormat());
-            pstmt.setBytes(4, cat.getImageData());
+            pstmt.setString(1, ingredient.getName());
+            pstmt.setString(2, String.valueOf(ingredient.getId()));
+
             pstmt.executeUpdate();
 
             ResultSet primaryKeys = pstmt.getGeneratedKeys();
             if (primaryKeys.next()) {
-                cat.setId(primaryKeys.getInt(1));
+                ingredient.setId(primaryKeys.getInt(1));
             }
         } finally {
             DataSource.silentClose(pstmt);
@@ -66,7 +66,7 @@ public class IngredientDAO {
         }
     }
 
-    private void update(LOLCat cat) throws SQLException {
+    private void update(Ingredient ingredient) throws SQLException {
         String sql = "update lolcat set title=?, filename=?, image_format=?, image_data=? where id=?";
         PreparedStatement pstmt = null;
         Connection conn = null;
@@ -74,11 +74,8 @@ public class IngredientDAO {
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, cat.getTitle());
-            pstmt.setString(2, cat.getFilename());
-            pstmt.setString(3, cat.getImageFormat());
-            pstmt.setBytes(4, cat.getImageData());
-            pstmt.setInt(5, cat.getId());
+            pstmt.setString(1, ingredient.getName());
+            pstmt.setInt(5, ingredient.getId());
             pstmt.executeUpdate();
         } finally {
             DataSource.silentClose(pstmt);
@@ -86,7 +83,7 @@ public class IngredientDAO {
         }
     }
 
-    public void delete(LOLCat cat) throws SQLException {
+    public void delete(Ingredient ingredient) throws SQLException {
         String sql = "delete from lolcat where id=?";
         PreparedStatement pstmt = null;
         Connection conn = null;
@@ -94,7 +91,7 @@ public class IngredientDAO {
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, cat.getId());
+            pstmt.setInt(1, ingredient.getId());
             pstmt.executeUpdate();
         } finally {
             DataSource.silentClose(pstmt);
@@ -102,8 +99,8 @@ public class IngredientDAO {
         }
     }
 
-    public LOLCat get(int id) throws SQLException, CatNotFoundException {
-        String sql = "select * from lolcat where id=?";
+    public Ingredient get(int id) throws SQLException, IngredientNotFoundException {
+        String sql = "select * from ingredients where id=?";
 
         PreparedStatement pstmt = null;
         Connection conn = null;
@@ -116,10 +113,10 @@ public class IngredientDAO {
             res = pstmt.executeQuery();
 
             if (res.next()) {
-                LOLCat cat = loadCat(res);
-                return cat;
+                Ingredient ingredient = loadIngredient(res);
+                return ingredient;
             } else {
-                throw new CatNotFoundException("Error: Cat not found with id " + id + "!");
+                throw new IngredientNotFoundException("Error: Ingredient not found with id " + id + "!");
             }
         } finally {
             DataSource.silentClose(pstmt);
@@ -128,9 +125,9 @@ public class IngredientDAO {
 
     }
 
-    public List<LOLCat> list() throws SQLException {
-        List<LOLCat> cats = new ArrayList<LOLCat>();
-        String sql = "select * from lolcat";
+    public List<Ingredient> list() throws SQLException {
+        List<Ingredient> ingredients = new ArrayList<Ingredient>();
+        String sql = "select * from ingredients";
 
         PreparedStatement pstmt = null;
         Connection conn = null;
@@ -142,10 +139,10 @@ public class IngredientDAO {
             res = pstmt.executeQuery();
 
             while (res.next()) {
-                LOLCat cat = loadCat(res);
-                cats.add(cat);
+                Ingredient ingredient = loadIngredient(res);
+                ingredients.add(ingredient);
             }
-            return cats;
+            return ingredients;
         } finally {
             DataSource.silentClose(pstmt);
             DataSource.silentClose(conn);
@@ -153,9 +150,9 @@ public class IngredientDAO {
 
     }
 
-    public List<LOLCat> search(String text) throws SQLException {
-        List<LOLCat> cats = new ArrayList<LOLCat>();
-        String sql = "select * from lolcat where title like ? or filename like ?";
+    public List<Ingredient> search(String text) throws SQLException {
+        List<Ingredient> ingredients = new ArrayList<Ingredient>();
+        String sql = "select * from ingredients where title like ? or filename like ?";
 
         PreparedStatement pstmt = null;
         Connection conn = null;
@@ -171,10 +168,10 @@ public class IngredientDAO {
             res = pstmt.executeQuery();
 
             while (res.next()) {
-                LOLCat cat = loadCat(res);
-                cats.add(cat);
+                Ingredient ingredient = loadIngredient(res);
+                ingredients.add(ingredient);
             }
-            return cats;
+            return ingredients;
         } finally {
             DataSource.silentClose(pstmt);
             DataSource.silentClose(conn);
@@ -183,15 +180,13 @@ public class IngredientDAO {
 
     }
 
-    private LOLCat loadCat(ResultSet res) throws SQLException {
-        LOLCat cat = new LOLCat();
-        cat.setId(res.getInt("id"));
-        cat.setTitle(res.getString("title"));
-        cat.setFilename(res.getString("filename"));
-        cat.setImageFormat(res.getString("image_format"));
-        cat.setImageData(res.getBytes("image_data"));
-        cat.setCreated(res.getDate("created"));
-        return cat;
+    private Ingredient loadIngredient(ResultSet res) throws SQLException {
+        Ingredient ingredient = new Ingredient();
+        ingredient.setId(res.getInt("id"));
+        ingredient.setName(res.getString("title"));
+
+        ingredient.setCreated(res.getDate("created"));
+        return ingredient;
     }
 
 }
