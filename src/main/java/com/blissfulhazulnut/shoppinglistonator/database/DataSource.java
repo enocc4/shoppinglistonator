@@ -29,14 +29,16 @@ public class DataSource {
 
         PropertyResourceBundle dbProps = (PropertyResourceBundle) ResourceBundle.getBundle("db");
         if ("".equals(dbProps.getString("db.username"))) {
+            System.out.println("username");
             throw new RuntimeException("Can't understand contents of db.properties file - got empty username.");
         }
 
         ds = new BasicDataSource();
+
         ds.setDriverClassName(dbProps.getString("db.driver"));
         ds.setUsername(dbProps.getString("db.username"));
         ds.setPassword(dbProps.getString("db.password"));
-
+        System.out.println(ds);
         // some versions of the mysql driver have a bug in timezone detection;
         // this is a workaround.
         String timezoneWorkaround = "&useLegacyDatetimeCode=false&serverTimezone=UTC";
@@ -81,10 +83,13 @@ public class DataSource {
      * @throws SQLException
      */
     public Connection getConnection() throws SQLException {
+        System.out.println("get connection");
         return this.ds.getConnection();
+
     }
 
     public static void silentClose(ResultSet res) {
+        System.out.println("silent close resultset");
         if (res != null) {
             try {
                 res.close();
@@ -93,6 +98,7 @@ public class DataSource {
         }
     }
     public static void silentClose(Statement stmt) {
+        System.out.println("silent close statement");
         if (stmt != null) {
             try {
                 stmt.close();
@@ -101,6 +107,7 @@ public class DataSource {
         }
     }
     public static void silentClose(Connection conn) {
+        System.out.println("silent close conn");
         if (conn != null) {
             try {
                 conn.close();

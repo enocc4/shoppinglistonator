@@ -1,14 +1,14 @@
 package com.blissfulhazulnut.shoppinglistonator;
 
-import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+
+import java.sql.Array;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.Cookie;
@@ -23,10 +23,11 @@ import com.blissfulhazulnut.shoppinglistonator.models.Ingredient;
 
 
 
-public class IngredientMangeServlet extends HttpServlet{
+public class IngredientManagerServlet extends HttpServlet implements Servlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         String pathInfo = req.getPathInfo();
         if (pathInfo == null || "".equals(pathInfo)) {
             list(req, resp);
@@ -52,27 +53,31 @@ public class IngredientMangeServlet extends HttpServlet{
     }
 
     void list(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         IngredientDAO dao = new IngredientDAO();
         List<Ingredient> ingredients = null;
+
         try {
             ingredients = dao.list();
             req.setAttribute("ingredients", ingredients);
         } catch (SQLException e) {
+
             e.printStackTrace();
+
         }
-        req.getRequestDispatcher("/WEB-INF/lolcats/list.jsp").forward(req, resp);
+        req.getRequestDispatcher("/list.jsp").forward(req, resp);
     }
 
     void addForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/lolcats/add.jsp").forward(req, resp);
+        req.getRequestDispatcher("/add.jsp").forward(req, resp);
     }
 
     void editForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/lolcats/edit.jsp").forward(req, resp);
+        req.getRequestDispatcher("/edit.jsp").forward(req, resp);
     }
 
     void deleteConfirm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/lolcats/delete-confirm.jsp").forward(req, resp);
+        req.getRequestDispatcher("/delete-confirm.jsp").forward(req, resp);
     }
 
     /** From a post, saves the newly added or modified LOLcat */
@@ -88,14 +93,13 @@ public class IngredientMangeServlet extends HttpServlet{
                 Ingredient ingredient = dao.get(Integer.parseInt(req.getParameter("id")));
 
 
-                ingredient.setImageFormat(req.getParameter("format"));
+
 
                 // Retrieves <input type="file" name="file">
                 Part filePart = req.getPart("image");
                 String fileName = filePart.getName(); // TODO
                 System.out.println("DEBUG - fileName is " + fileName);
-                byte[] imageData = readDataStream(filePart.getInputStream());
-                ingredient.setImageData(imageData);
+
 
                 dao.save(ingredient);
                 result = "Changes saved!";
@@ -109,14 +113,12 @@ public class IngredientMangeServlet extends HttpServlet{
             // add-new scenario since there's no id
             Ingredient ingredient = new Ingredient();
             ingredient.setName(req.getParameter("title"));
-            ingredient.setImageFormat(req.getParameter("format"));
+
 
             // Retrieves <input type="file" name="file">
             Part filePart = req.getPart("image");
             String fileName = filePart.getName(); // TODO
             System.out.println("DEBUG - fileName is " + fileName);
-            byte[] imageData = readDataStream(filePart.getInputStream());
-            ingredient.setImageData(imageData);
 
             try {
                 dao.save(ingredient);
@@ -129,21 +131,11 @@ public class IngredientMangeServlet extends HttpServlet{
 
         // Redirect to a GET so if the user presses reload we don't get a
         // duplicate image POSTed.
-        resp.sendRedirect(req.getContextPath() + "/lolcats/manage/aftersave?result=" + URLEncoder.encode(result, StandardCharsets.UTF_8));
+        resp.sendRedirect(req.getContextPath() + "/lolcats/manage/aftersave?result=" /*+ URLEncoder.encode(result, StandardCharsets.UTF_8)*/);
 
     }
 
-    private byte[] readDataStream(InputStream fileContent) throws IOException {
-        // copies all bytes from the upload input stream into an in-memory byte
-        // array of uncertain size.
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        byte[] buffer = new byte[255];
-        int count = 0;
-        while ((count = fileContent.read(buffer)) != -1) {
-            bytes.write(buffer, 0, count);
-        }
-        return bytes.toByteArray();
-    }
+
 
     void afterSave(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("result", req.getParameter("result"));

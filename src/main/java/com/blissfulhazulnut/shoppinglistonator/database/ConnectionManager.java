@@ -8,6 +8,8 @@ package com.blissfulhazulnut.shoppinglistonator.database;
         import java.sql.Statement;
         import java.util.PropertyResourceBundle;
         import java.util.ResourceBundle;
+        import java.util.logging.Level;
+        import java.util.logging.Logger;
 
 /**
  * Demonstration of how to create connections without a connection pool, but
@@ -18,11 +20,16 @@ package com.blissfulhazulnut.shoppinglistonator.database;
  */
 public class ConnectionManager {
 
+   
+
     private String username = null;
     private String password = null;
     private String longUrl = null;
 
     public ConnectionManager() throws ClassNotFoundException {
+
+        System.out.println("connect??????");
+
         PropertyResourceBundle dbProps = (PropertyResourceBundle) ResourceBundle.getBundle("db");
         if ("".equals(dbProps.getString("db.username"))) {
             throw new RuntimeException(
@@ -46,6 +53,7 @@ public class ConnectionManager {
     }
 
     public Connection getConnection() throws SQLException {
+        System.out.println("connect connect connect???yessssss");
         return DriverManager.getConnection(longUrl, username, password);
     }
 

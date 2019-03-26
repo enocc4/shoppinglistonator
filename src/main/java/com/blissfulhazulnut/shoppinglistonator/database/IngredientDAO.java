@@ -1,13 +1,11 @@
 package com.blissfulhazulnut.shoppinglistonator.database;
 
-        import java.sql.Connection;
-        import java.sql.PreparedStatement;
-        import java.sql.ResultSet;
-        import java.sql.SQLException;
-        import java.sql.Statement;
+        import java.sql.*;
         import java.util.ArrayList;
         import java.util.List;
         import java.util.*;
+        import java.util.logging.Level;
+        import java.util.logging.Logger;
 
         import com.blissfulhazulnut.shoppinglistonator.models.Ingredient;
         import com.blissfulhazulnut.shoppinglistonator.models.IngredientNotFoundException;
@@ -28,7 +26,27 @@ package com.blissfulhazulnut.shoppinglistonator.database;
  */
 public class IngredientDAO {
 
-    DataSource ds;
+    /*public static void main(String[] args) {
+        String url ="jdbc:mysql://localhost:3306/testdb?useSSL=false";
+        String user = "User";
+        String password = "C0rnp0n3!!";
+
+        String ingredient = "corn";
+        String sql = "INSERT INTO ingredients(ingred_name) VALUES(?)";
+
+        try (Connection con = DriverManager.getConnection(url, user, password);
+            PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setString(1, ingredient);
+            pst.executeUpdate();
+
+            System.out.println("A new ingredient has been inserted");
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(IngredientDAO.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }*/
+
+   DataSource ds;
 
     public IngredientDAO() {
         this.ds = DataSource.getInstance();
@@ -44,7 +62,7 @@ public class IngredientDAO {
     }
 
     private void insert(Ingredient ingredient) throws SQLException {
-        String sql = "insert into ingredients (title, filename, image_format, image_data) values (?,?,?,?)";
+        String sql = "insert into ingredients (name) values (?)";
         PreparedStatement pstmt = null;
         Connection conn = null;
 
@@ -67,7 +85,7 @@ public class IngredientDAO {
     }
 
     private void update(Ingredient ingredient) throws SQLException {
-        String sql = "update lolcat set title=?, filename=?, image_format=?, image_data=? where id=?";
+        String sql = "update lolcat set name=?, where id=?";
         PreparedStatement pstmt = null;
         Connection conn = null;
 
@@ -126,24 +144,36 @@ public class IngredientDAO {
     }
 
     public List<Ingredient> list() throws SQLException {
-        List<Ingredient> ingredients = new ArrayList<Ingredient>();
+
+        List<Ingredient> ingredients = new ArrayList<>();
         String sql = "select * from ingredients";
 
         PreparedStatement pstmt = null;
         Connection conn = null;
-        ResultSet res = null;
+        ResultSet res;
 
         try {
+
             conn = ds.getConnection();
+
             pstmt = conn.prepareStatement(sql);
+
             res = pstmt.executeQuery();
 
+            System.out.println(res);
+
+
+            System.out.println(res.next());
             while (res.next()) {
                 Ingredient ingredient = loadIngredient(res);
                 ingredients.add(ingredient);
+                System.out.println("while loop");
             }
+            System.out.print(ingredients);
             return ingredients;
+
         } finally {
+            System.out.print("sql finally...");
             DataSource.silentClose(pstmt);
             DataSource.silentClose(conn);
         }
@@ -151,14 +181,16 @@ public class IngredientDAO {
     }
 
     public List<Ingredient> search(String text) throws SQLException {
+
         List<Ingredient> ingredients = new ArrayList<Ingredient>();
-        String sql = "select * from ingredients where title like ? or filename like ?";
+        String sql = "select * from ingredients where name like ?";
 
         PreparedStatement pstmt = null;
         Connection conn = null;
         ResultSet res = null;
 
         try {
+
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(sql);
 
@@ -173,6 +205,7 @@ public class IngredientDAO {
             }
             return ingredients;
         } finally {
+
             DataSource.silentClose(pstmt);
             DataSource.silentClose(conn);
         }
@@ -183,9 +216,9 @@ public class IngredientDAO {
     private Ingredient loadIngredient(ResultSet res) throws SQLException {
         Ingredient ingredient = new Ingredient();
         ingredient.setId(res.getInt("id"));
-        ingredient.setName(res.getString("title"));
+        ingredient.setName(res.getString("name"));
 
-        ingredient.setCreated(res.getDate("created"));
+        //ingredient.setCreated(res.getDate("created"));
         return ingredient;
     }
 
