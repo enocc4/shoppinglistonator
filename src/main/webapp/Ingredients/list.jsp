@@ -1,7 +1,7 @@
 <%@ page import="java.util.List,com.blissfulhazulnut.shoppinglistonator.models.Ingredient;" %>
 <html>
 <head>
-<title>ingredients List</title></head>
+<title>Ingredients List</title></head>
 <body>
 <h1>ingredients List</h1>
 
@@ -14,15 +14,11 @@
 	List<Ingredient> ingredients = (List<Ingredient>) request.getAttribute("ingredients");
 	for (Ingredient ingredient : ingredients) {
 		%>
-
-		<div> <%=ingredient.getName()%></div>
-		<!--<div style="border: 1px solid #AAAAAA; padding: 15px; width: 300px;">
-
-
-
-		<br><a href="<%=request.getContextPath() %>/ingredients/manage/edit?id=<%=ingredient.getId() %>">Edit</a>
-		| <a href="<%=request.getContextPath() %>/ingredients/manage/delete?id=<%=ingredient.getId() %>">Delete</a>
-		</div><p></p>-->
+        <div style="border: 1px solid #AAAAAA; padding: 15px; width: 300px;">
+            <div> <%=ingredient.getName()%></div>
+            <a href="<%=request.getContextPath() %>/ingredients/manage/edit?id=<%=ingredient.getId() %>">Edit</a>
+            | <a href="<%=request.getContextPath() %>/ingredients/manage/delete?id=<%=ingredient.getId() %>">Delete</a>
+            </div><p></p>
 		<%
 	}
 	if (ingredients.isEmpty() || ingredients == null) {

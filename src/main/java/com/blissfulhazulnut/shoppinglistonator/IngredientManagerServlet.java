@@ -65,19 +65,19 @@ public class IngredientManagerServlet extends HttpServlet implements Servlet {
             e.printStackTrace();
 
         }
-        req.getRequestDispatcher("/list.jsp").forward(req, resp);
+        req.getRequestDispatcher("/Ingredients/list.jsp").forward(req, resp);
     }
 
     void addForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/add.jsp").forward(req, resp);
+        req.getRequestDispatcher("/Ingredients/addIngredient.jsp").forward(req, resp);
     }
 
     void editForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/edit.jsp").forward(req, resp);
+        req.getRequestDispatcher("/Ingredients/edit.jsp").forward(req, resp);
     }
 
     void deleteConfirm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/delete-confirm.jsp").forward(req, resp);
+        req.getRequestDispatcher("/Ingredients/delete-confirm.jsp").forward(req, resp);
     }
 
     /** From a post, saves the newly added or modified LOLcat */
@@ -104,7 +104,7 @@ public class IngredientManagerServlet extends HttpServlet implements Servlet {
                 dao.save(ingredient);
                 result = "Changes saved!";
             } catch (IngredientNotFoundException e) {
-                result = "Error - LOLCat not found with that id! Edit aborted.";
+                result = "Error - Ingredient not found with that id! Edit aborted.";
             } catch (SQLException e) {
                 result = "Error - A database error occurred.";
                 e.printStackTrace();
@@ -131,7 +131,7 @@ public class IngredientManagerServlet extends HttpServlet implements Servlet {
 
         // Redirect to a GET so if the user presses reload we don't get a
         // duplicate image POSTed.
-        resp.sendRedirect(req.getContextPath() + "/lolcats/manage/aftersave?result=" /*+ URLEncoder.encode(result, StandardCharsets.UTF_8)*/);
+        resp.sendRedirect(req.getContextPath() + "/ingredients/manage/aftersave?result=" /*+ URLEncoder.encode(result, StandardCharsets.UTF_8)*/);
 
     }
 
@@ -139,7 +139,7 @@ public class IngredientManagerServlet extends HttpServlet implements Servlet {
 
     void afterSave(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("result", req.getParameter("result"));
-        req.getRequestDispatcher("/WEB-INF/lolcats/after-save.jsp").forward(req, resp);
+        req.getRequestDispatcher("/Ingredients/after-save.jsp").forward(req, resp);
     }
 
     /** Spits out a ton of info about the request so you can troubleshoot */
