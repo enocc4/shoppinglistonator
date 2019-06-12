@@ -37,7 +37,8 @@ public class DataSource {
 
         ds.setDriverClassName(dbProps.getString("db.driver"));
         ds.setUsername(dbProps.getString("db.username"));
-        ds.setPassword(dbProps.getString("db.password"));
+
+        ds.setPassword(System.getenv("listonator_pswd"));
         System.out.println(ds);
         // some versions of the mysql driver have a bug in timezone detection;
         // this is a workaround.

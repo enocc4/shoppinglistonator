@@ -15,34 +15,43 @@
 		<servlet-class>com.blissfulhazulnut.shoppinglistonator.IngredientManagerServlet</servlet-class>
 
 	</servlet>
+
 	<servlet>
 		<servlet-name>IngredientDisplayServlet</servlet-name>
 		<servlet-class>com.blissfulhazulnut.shoppinglistonator.IngredientDisplayServlet</servlet-class>
 	</servlet>
 
-	<!-- This is a special servlet that knows how to compile jsp pages.
-	<servlet id="jsp">
-		<servlet-name>jsp</servlet-name>
-		<servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
-		<init-param>
-			<param-name>logVerbosityLevel</param-name>
-			<param-value>DEBUG</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>-->
+	<servlet>
+		<servlet-name>RecipeManagerServlet</servlet-name>
+		<servlet-class>com.blissfulhazulnut.shoppinglistonator.RecipeManagerServlet</servlet-class>
 
-	<!-- A servlet mapping matches a url pattern to which servlet should serve
-		up that content -->
+	</servlet>
+
+	<servlet>
+		<servlet-name>RecipeDisplayServlet</servlet-name>
+		<servlet-class>com.blissfulhazulnut.shoppinglistonator.RecipeDisplayServlet</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>IngredientDisplayServlet</servlet-name>
 		<url-pattern>/ingredients/show/*</url-pattern>
 	</servlet-mapping>
+
 	<servlet-mapping>
 		<servlet-name>IngredientManagerServlet</servlet-name>
 		<url-pattern>/ingredients/manage/*</url-pattern>
 	</servlet-mapping>
 
+
+	<servlet-mapping>
+		<servlet-name>RecipeDisplayServlet</servlet-name>
+		<url-pattern>/recipes/show/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>RecipeManagerServlet</servlet-name>
+		<url-pattern>/recipes/manage/*</url-pattern>
+	</servlet-mapping>
 
 
 	<!-- more special mappings so jsp's work properly

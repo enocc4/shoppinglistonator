@@ -26,25 +26,7 @@ package com.blissfulhazulnut.shoppinglistonator.database;
  */
 public class IngredientDAO {
 
-    /*public static void main(String[] args) {
-        String url ="jdbc:mysql://localhost:3306/testdb?useSSL=false";
-        String user = "User";
-        String password = "C0rnp0n3!!";
 
-        String ingredient = "corn";
-        String sql = "INSERT INTO ingredients(ingred_name) VALUES(?)";
-
-        try (Connection con = DriverManager.getConnection(url, user, password);
-            PreparedStatement pst = con.prepareStatement(sql)) {
-            pst.setString(1, ingredient);
-            pst.executeUpdate();
-
-            System.out.println("A new ingredient has been inserted");
-        } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(IngredientDAO.class.getName());
-            lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        }
-    }*/
 
    DataSource ds;
 
@@ -62,7 +44,7 @@ public class IngredientDAO {
     }
 
     private void insert(Ingredient ingredient) throws SQLException {
-        String sql = "insert into ingredients (name) values (?)";
+        String sql = "insert into ingredient (name) values (?)";
         PreparedStatement pstmt = null;
         Connection conn = null;
 
@@ -146,7 +128,7 @@ public class IngredientDAO {
     public List<Ingredient> list() throws SQLException {
 
         List<Ingredient> ingredients = new ArrayList<>();
-        String sql = "select * from ingredients";
+        String sql = "select * from ingredient";
 
         PreparedStatement pstmt = null;
         Connection conn = null;
@@ -163,7 +145,6 @@ public class IngredientDAO {
             System.out.println(res);
 
 
-            System.out.println(res.next());
             while (res.next()) {
                 Ingredient ingredient = loadIngredient(res);
                 ingredients.add(ingredient);

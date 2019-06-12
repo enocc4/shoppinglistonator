@@ -36,7 +36,7 @@ public class ConnectionManager {
                     "Can't understand contents of db.properties file - got empty username.");
         }
         this.username = dbProps.getString("db.username");
-        this.password = dbProps.getString("db.password");
+        this.password = dbProps.getString(System.getenv("listonator_pswd"));
 
         // only need to load the driver into memory once.
         Class.forName(dbProps.getString("db.driver"));
@@ -54,7 +54,7 @@ public class ConnectionManager {
 
     public Connection getConnection() throws SQLException {
         System.out.println("connect connect connect???yessssss");
-        return DriverManager.getConnection(longUrl, username, password);
+        return DriverManager.getConnection(longUrl, username, System.getenv("listonator_pswd"));
     }
 
     public static void silentClose(ResultSet res) {

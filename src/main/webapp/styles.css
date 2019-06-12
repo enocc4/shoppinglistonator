@@ -1,0 +1,10 @@
+body {
+    text-align:center;
+}
+
+list, select {
+    text-align: center;
+    display:block;
+    margin:auto;
+}
+
